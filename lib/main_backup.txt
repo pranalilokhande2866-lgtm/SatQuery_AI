@@ -1,0 +1,608 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const SatQueryAI());
+}
+
+class SatQueryAI extends StatelessWidget {
+  const SatQueryAI({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'SatQuery AI',
+      theme: ThemeData(
+        useMaterial3: true,
+        fontFamily: 'Arial',
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF5B4BEA)),
+      ),
+      home: const Dashboard(),
+    );
+  }
+}
+
+class Dashboard extends StatelessWidget {
+  const Dashboard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F7FB),
+      body: Row(
+        children: [
+          // ================= SIDEBAR =================
+          Container(
+            width: 230,
+            color: const Color(0xFF071A35),
+            child: Column(
+              children: [
+                const SizedBox(height: 30),
+
+                // Logo
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.public, color: Colors.lightBlueAccent, size: 35),
+                    SizedBox(width: 8),
+                    Text(
+                      'SatQuery AI',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 40),
+
+                sidebarItem(Icons.dashboard, 'Dashboard', true),
+                sidebarItem(Icons.add_box_outlined, 'New Analysis', false),
+                sidebarItem(
+                  Icons.cloud_upload_outlined,
+                  'Upload Images',
+                  false,
+                ),
+                sidebarItem(Icons.image_search, 'Results', false),
+                sidebarItem(
+                  Icons.account_tree_outlined,
+                  'Execution Trace',
+                  false,
+                ),
+                sidebarItem(Icons.description_outlined, 'Reports', false),
+                sidebarItem(Icons.storage_outlined, 'Datasets', false),
+                sidebarItem(Icons.settings_outlined, 'Settings', false),
+
+                const Spacer(),
+
+                const Padding(
+                  padding: EdgeInsets.all(15),
+                  child: Text(
+                    '© 2026 SatQuery AI',
+                    style: TextStyle(color: Colors.white54, fontSize: 11),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // ================= MAIN AREA =================
+          Expanded(
+            child: Column(
+              children: [
+                // Top bar
+                Container(
+                  height: 70,
+                  color: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 25),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.menu),
+
+                      const Spacer(),
+
+                      const Icon(Icons.notifications_none),
+
+                      const SizedBox(width: 20),
+
+                      const CircleAvatar(
+                        backgroundColor: Colors.teal,
+                        child: Text(
+                          'PL',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+
+                      const SizedBox(width: 10),
+
+                      const Text(
+                        'Pranav Langade',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Main content
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(25),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        welcomeCard(),
+
+                        const SizedBox(height: 20),
+
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(flex: 2, child: analysisCard()),
+
+                            const SizedBox(width: 20),
+
+                            Expanded(child: executionCard()),
+                          ],
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        resultCard(),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ================= SIDEBAR ITEM =================
+
+  Widget sidebarItem(IconData icon, String title, bool selected) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 13),
+      decoration: BoxDecoration(
+        color: selected ? const Color(0xFF5B4BEA) : Colors.transparent,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.white, size: 20),
+          const SizedBox(width: 12),
+          Text(
+            title,
+            style: const TextStyle(color: Colors.white, fontSize: 13),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ================= WELCOME CARD =================
+
+  Widget welcomeCard() {
+    return Container(
+      padding: const EdgeInsets.all(25),
+      decoration: cardDecoration(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Welcome to SatQuery AI 👋',
+            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 8),
+
+          const Text(
+            'Analyze remote-sensing imagery using natural-language queries.',
+            style: TextStyle(color: Colors.black54, fontSize: 14),
+          ),
+
+          const SizedBox(height: 20),
+
+          Row(
+            children: [
+              modeCard(Icons.image, 'Single Image', 'VQA & Captioning'),
+
+              const SizedBox(width: 12),
+
+              modeCard(Icons.compare, 'Bi-temporal', 'Change Detection'),
+
+              const SizedBox(width: 12),
+
+              modeCard(Icons.layers, 'Optical + SAR', 'Cross-modal Analysis'),
+
+              const SizedBox(width: 12),
+
+              modeCard(Icons.auto_awesome, 'Agentic AI', 'Smart Model Routing'),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget modeCard(IconData icon, String title, String subtitle) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF7F8FC),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(icon, color: const Color(0xFF5B4BEA), size: 25),
+
+            const SizedBox(height: 8),
+
+            Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+
+            const SizedBox(height: 3),
+
+            Text(
+              subtitle,
+              style: const TextStyle(fontSize: 10, color: Colors.black54),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ================= ANALYSIS =================
+
+  Widget analysisCard() {
+    return Container(
+      padding: const EdgeInsets.all(22),
+      decoration: cardDecoration(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'New Analysis',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 5),
+
+          const Text(
+            'Upload satellite imagery and ask your question.',
+            style: TextStyle(color: Colors.black54),
+          ),
+
+          const SizedBox(height: 20),
+
+          Row(
+            children: [
+              analysisButton('Single Image', Icons.image, true),
+
+              const SizedBox(width: 8),
+
+              analysisButton('Bi-temporal', Icons.compare, false),
+
+              const SizedBox(width: 8),
+
+              analysisButton('Optical + SAR', Icons.layers, false),
+            ],
+          ),
+
+          const SizedBox(height: 20),
+
+          // Upload
+          Container(
+            height: 170,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey.shade300),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.cloud_upload_outlined,
+                  size: 45,
+                  color: Colors.grey.shade500,
+                ),
+
+                const SizedBox(height: 10),
+
+                const Text(
+                  'Upload Satellite Image',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+
+                const SizedBox(height: 5),
+
+                const Text(
+                  'GeoTIFF • TIFF • PNG • JPG',
+                  style: TextStyle(fontSize: 11, color: Colors.black54),
+                ),
+
+                const SizedBox(height: 12),
+
+                ElevatedButton(
+                  onPressed: () {},
+                  child: const Text('Choose File'),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          // Query
+          const Text(
+            'Enter Your Query',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 8),
+
+          const TextField(
+            maxLines: 4,
+            decoration: InputDecoration(
+              hintText:
+                  'Example: Describe the land-cover and major objects visible in this image.',
+              border: OutlineInputBorder(),
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
+          SizedBox(
+            width: double.infinity,
+            height: 48,
+            child: ElevatedButton.icon(
+              onPressed: () {},
+              icon: const Icon(Icons.auto_awesome),
+              label: const Text('Analyze with AI Agent'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF5B4BEA),
+                foregroundColor: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget analysisButton(String title, IconData icon, bool selected) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: selected ? const Color(0xFF5B4BEA) : Colors.white,
+          border: Border.all(color: Colors.grey.shade300),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: selected ? Colors.white : Colors.black87),
+
+            const SizedBox(height: 4),
+
+            Text(
+              title,
+              style: TextStyle(
+                color: selected ? Colors.white : Colors.black87,
+                fontSize: 11,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ================= EXECUTION =================
+
+  Widget executionCard() {
+    return Container(
+      padding: const EdgeInsets.all(22),
+      decoration: cardDecoration(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            '🤖 Agent Execution',
+            style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 20),
+
+          executionStep('1', 'Query Classification', 'Identify requested task'),
+
+          executionStep(
+            '2',
+            'Input Validation',
+            'Check image format & metadata',
+          ),
+
+          executionStep('3', 'Model Selection', 'Select specialist model'),
+
+          executionStep('4', 'Model Execution', 'Run AI inference'),
+
+          executionStep('5', 'Result Integration', 'Generate final evidence'),
+
+          const SizedBox(height: 10),
+
+          OutlinedButton(
+            onPressed: () {},
+            child: const Text('View Full Execution Trace'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget executionStep(String number, String title, String subtitle) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 18),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CircleAvatar(
+            radius: 13,
+            backgroundColor: const Color(0xFF5B4BEA),
+            child: Text(
+              number,
+              style: const TextStyle(color: Colors.white, fontSize: 11),
+            ),
+          ),
+
+          const SizedBox(width: 12),
+
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                  ),
+                ),
+
+                const SizedBox(height: 3),
+
+                Text(
+                  subtitle,
+                  style: const TextStyle(color: Colors.black54, fontSize: 11),
+                ),
+              ],
+            ),
+          ),
+
+          const Icon(Icons.check_circle, color: Colors.green, size: 18),
+        ],
+      ),
+    );
+  }
+
+  // ================= RESULTS =================
+
+  Widget resultCard() {
+    return Container(
+      padding: const EdgeInsets.all(22),
+      decoration: cardDecoration(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Results & Visual Evidence',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 15),
+
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  height: 220,
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF7F8FC),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '🧠 AI Answer',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+
+                      SizedBox(height: 15),
+
+                      Text(
+                        'Your evidence-grounded AI answer '
+                        'will appear here after analysis.',
+                        style: TextStyle(fontSize: 13, height: 1.5),
+                      ),
+
+                      Spacer(),
+
+                      Text(
+                        'Confidence: 92%',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+
+                      SizedBox(height: 8),
+
+                      LinearProgressIndicator(value: 0.92),
+                    ],
+                  ),
+                ),
+              ),
+
+              const SizedBox(width: 20),
+
+              Expanded(
+                flex: 2,
+                child: Container(
+                  height: 220,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE2E8EC),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.satellite_alt,
+                          size: 55,
+                          color: Colors.blueGrey,
+                        ),
+
+                        SizedBox(height: 10),
+
+                        Text(
+                          'Visual Evidence',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+
+                        SizedBox(height: 5),
+
+                        Text(
+                          'Satellite image / change map',
+                          style: TextStyle(color: Colors.black54),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ================= CARD STYLE =================
+
+  BoxDecoration cardDecoration() {
+    return BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(15),
+      boxShadow: [
+        BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10),
+      ],
+    );
+  }
+}
