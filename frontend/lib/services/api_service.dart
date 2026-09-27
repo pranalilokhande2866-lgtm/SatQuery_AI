@@ -26,7 +26,7 @@ class ApiService {
     required double longitude,
     required String analysisMode,
   }) async {
-    final uri = Uri.parse('$baseUrl/analyze');
+    final uri = Uri.parse('$baseUrl/query/analyze');
 
     try {
       final request = http.MultipartRequest('POST', uri);
