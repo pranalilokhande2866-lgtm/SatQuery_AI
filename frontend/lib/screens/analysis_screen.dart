@@ -4,7 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 import '../models/analysis_result.dart';
-import '../services/mock_api_service.dart';
+import '../services/api_service.dart';
 import '../widgets/analysis_step.dart';
 import 'result_screen.dart';
 
@@ -39,7 +39,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
   static const Color green = Color(0xFF10B981);
   static const Color background = Color(0xFFF5F7FA);
 
-  final MockApiService apiService = MockApiService();
+  final ApiService apiService = ApiService();
 
   late AnimationController animationController;
 
@@ -93,6 +93,12 @@ class _AnalysisScreenState extends State<AnalysisScreen>
 
     final AnalysisResult result = await apiService.analyze(
       question: widget.question,
+      selectedFile: widget.selectedFile,
+      fileBytes: widget.fileBytes,
+      imageType: widget.imageType,
+      latitude: widget.latitude,
+      longitude: widget.longitude,
+      analysisMode: widget.analysisMode,
     );
 
     if (!mounted) return;
