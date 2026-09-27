@@ -1,10 +1,10 @@
 # SatQuery AI
 
-SatQuery AI is a Flutter application and FastAPI backend for asking natural-language questions about remote-sensing imagery. The project is intended to grow into an agentic vision-language assistant that routes single-image, bi-temporal, and optical-SAR queries to specialist tools.
+SatQuery AI is a Flutter application and FastAPI backend for asking natural-language questions about remote-sensing imagery. It is designed as an agentic, query-driven assistant that routes requests to appropriate remote-sensing workflows.
 
 ## Project status
 
-This repository currently contains an interactive Flutter UI and a backend routing prototype. The `/query/analyze` endpoint validates uploaded file extensions, selects a workflow, and returns an auditable execution trace. Its answer text and named specialist tools are illustrative placeholders: this version does **not** run trained vision, grounding, change-detection, or optical-SAR models, nor does it perform model fine-tuning. It does not yet produce actual image overlays, masks, or spatial evidence. Do not use its responses for operational decisions.
+This repository currently contains an interactive Flutter UI and a backend routing prototype. The `/query/analyze` endpoint validates uploaded file extensions, selects a workflow, and returns an auditable execution trace. The returned answer text and named specialist tools are illustrative placeholders: this version does **not** run trained vision, grounding, change-detection, or optical-SAR models, nor does it perform model fine-tuning. It does not yet produce actual image overlays, masks, or spatial evidence. Do not use its responses for operational decisions.
 
 The Flutter client currently submits one image at a time. Paired-image workflows can be requested through the backend API directly, but end-to-end paired-image upload and display are not yet implemented in the UI.
 
@@ -18,7 +18,7 @@ The Flutter client currently submits one image at a time. Paired-image workflows
   - Text-guided region grounding
   - Bi-temporal change analysis
   - Optical-SAR cross-modal analysis
-- Input extension checks and JSON execution trace with selected task, tool labels, parameters, and input filenames.
+- Input extension checks and a JSON execution trace with selected task, tool labels, parameters, and input filenames.
 - GeoTIFF/TIFF uploads are accepted by the analysis endpoint. PNG/JPEG are accepted only when `benchmark_dataset=true`.
 
 ## Repository layout
@@ -40,29 +40,29 @@ frontend/
 
 ## Run the backend
 
-From the repository root:
+From the repository root in PowerShell:
 
 ```powershell
 py -m venv .venv
 .\.venv\Scripts\Activate.ps1
 py -m pip install -r backend\requirements.txt
-cd backend
+Set-Location backend
 uvicorn main:app --reload
 ```
 
-The API will be available at `http://127.0.0.1:8000`. Check `http://127.0.0.1:8000/health` for the health response and `http://127.0.0.1:8000/docs` for interactive API documentation.
+The API is available at `http://127.0.0.1:8000`. Check `http://127.0.0.1:8000/health` for the health response and `http://127.0.0.1:8000/docs` for interactive API documentation.
 
 ## Run the Flutter app
 
 In a second terminal:
 
 ```powershell
-cd frontend
+Set-Location frontend
 flutter pub get
 flutter run
 ```
 
-The API client currently targets `http://127.0.0.1:8000`. When running on an Android emulator or a physical device, configure the client base URL to an address reachable from that device (for example, the emulator's host-loopback address or the development machine's LAN address).
+The API client currently targets `http://127.0.0.1:8000`. For an Android emulator or a physical device, configure the client base URL to an address reachable from that device (for example, the emulator's host-loopback address or the development machine's LAN address).
 
 ## Analysis API
 
@@ -70,8 +70,8 @@ The API client currently targets `http://127.0.0.1:8000`. When running on an And
 
 | Field | Required | Description |
 | --- | --- | --- |
-| `file` | Yes | Primary image (`.tif` or `.tiff`; benchmark `.png`, `.jpg`, or `.jpeg` only with the flag below) |
-| `question` | Yes | Natural-language query |
+| `file` | Yes | Primary image (`.tif` or `.tiff`; benchmark `.png`, `.jpg`, or `.jpeg` only when the flag below is true) |
+| `question` | Yes | Natural-language query (at least three characters) |
 | `image_type` | No | Primary modality label; defaults to `Optical (RGB)` |
 | `analysis_mode` | No | User-selected mode; defaults to `Visual Question Answering` |
 | `second_file` | No | Paired image for temporal or cross-modal workflows |
@@ -90,11 +90,11 @@ curl.exe -X POST http://127.0.0.1:8000/query/analyze `
   -F "analysis_mode=Visual Question Answering"
 ```
 
-For a paired optical-SAR request, send both `file` and `second_file`, and specify `image_type=Optical (RGB)` and `second_image_type=SAR`. For a bi-temporal pair, specify the image modalities and ask a change-focused question.
+For a paired optical-SAR request, send both `file` and `second_file`, and specify `image_type=Optical (RGB)` and `second_image_type=SAR`. For a bi-temporal pair, provide both corresponding images and ask a change-focused question.
 
 The JSON response includes `question`, `answer`, `confidence`, `analysis_type`, `evidence`, `execution_trace`, and `spatial_evidence`. In the current prototype, these response fields are generated by routing logic and are not outputs from image inference.
 
-## Intended model and evaluation plan
+## Intended model adaptation and evaluation
 
 The intended remote-sensing adaptation and evaluation datasets are:
 
@@ -106,7 +106,7 @@ The intended remote-sensing adaptation and evaluation datasets are:
 | CDVQA | Evaluate change-based visual question answering on image pairs |
 | ISRO/SAC evaluation set | Evaluate applicable paired Cartosat-2S optical and RISAT SAR tasks using held-out references |
 
-The following are proposed metric categories; no benchmark scores are currently reported by this repository.
+These model adaptations, dataset evaluations, and benchmark results are not currently implemented or reported by this repository.
 
 | Task | Example evaluation measures |
 | --- | --- |
@@ -120,11 +120,11 @@ The following are proposed metric categories; no benchmark scores are currently 
 ## Development checks
 
 ```powershell
-cd backend
+Set-Location backend
 py -m compileall .
-cd ..\frontend
+Set-Location ..\frontend
 flutter analyze
 flutter test
 ```
 
-Flutter checks require the Flutter SDK. Backend API responses should be treated as prototype output until specialist models and evidence generation are integrated and validated against the prescribed benchmark splits.
+Flutter checks require the Flutter SDK. Backend responses should be treated as prototype output until specialist models and evidence generation are integrated and validated against the prescribed benchmark splits.
